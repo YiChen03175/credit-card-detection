@@ -1,3 +1,8 @@
+'''
+@File FeatureTest.py
+@Brief Test two features, corner and line, to find a robust feature for detection
+'''
+
 import cv2
 import numpy as np
 

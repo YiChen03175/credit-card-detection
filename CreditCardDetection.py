@@ -1,3 +1,8 @@
+'''
+@File CreditCardDetection.py
+@Brief Detect shape of credit card in natural image
+'''
+
 import cv2 
 import argparse
 
