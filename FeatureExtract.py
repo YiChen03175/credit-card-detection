@@ -1,10 +1,11 @@
 '''
-@File FeatureTest.py
-@Brief Test two features, corner and line, to find a robust feature for detection
+@File FeatureExtract.py
+@Brief Extract two features, corner and line, to find a more robust feature for detection
 '''
 
 import cv2
 import numpy as np
+import argparse
 
 '''
 Harris Corner Detection
@@ -47,8 +48,16 @@ def LineDetector(threshold):
 
 if __name__=='__main__':
 
-	# Read edge_map image
-	edge_map = cv2.imread('./images/test1_edge_map.jpg',  cv2.CV_8UC1)
+	# Take arguments from command line 
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-input', default='./images/test1_edge_map.jpg')
+	args = parser.parse_args()
+
+	# Read input image
+	edge_map = cv2.imread(args.input, cv2.CV_8UC1)
+	if edge_map is None:
+	    print('Couldn\'t open', args.input)
+	    exit(0)
 
 	# Parameter for CornerHarris tracker bar
 	window_name = 'Corner Detector'
@@ -67,7 +76,7 @@ if __name__=='__main__':
 
 	# Run Hough Line Transformation
 	cv2.namedWindow(window_name)
-	cv2.createTrackbar(title, window_name, 10, 50, LineDetector)
-	LineDetector(1)
+	cv2.createTrackbar(title, window_name, 10, 20, LineDetector)
+	LineDetector(10)
 	cv2.waitKey()
 	cv2.destroyAllWindows()
