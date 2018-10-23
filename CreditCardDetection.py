@@ -8,14 +8,6 @@ import argparse
 import numpy as np
 from ContourDetect import ContourDetector
 
-'''
-Canny Edge Detection
-'''
-
-# Parameters for canny dectector tracker bar
-window_name = 'Edge Map'
-title = 'Threshold:'
-
 def CannyDetector(threshold=40):
 	'''
 	Canny detection by threshold values
@@ -33,7 +25,7 @@ def CannyDetector(threshold=40):
 	# Detect edges using canny detector
 	edge_map = cv2.Canny(img_blur, threshold, threshold*3, apertureSize = 3)
 
-	cv2.imshow(window_name, edge_map)
+	cv2.imshow('Edge Map', edge_map)
 
 	return edge_map
 
@@ -54,6 +46,10 @@ ratio = 500/src.shape[0]
 src = cv2.resize(src, (int(ratio*src.shape[1]), 500))
 
 '''
+# Parameters for canny dectector tracker bar
+window_name = 'Edge Map'
+title = 'Threshold:'
+
 # Create window for trackerbar
 print('Choose a proper threshold and press any key ...')
 cv2.namedWindow(window_name)
@@ -80,9 +76,12 @@ cv2.destroyAllWindows()
 cv2.imwrite('./images/test{}_edge_map.jpg'.format(args.input[-5]), edge_map)
 print('./images/test{}_edge_map.jpg saved!'.format(args.input[-5]))
 
+# Get contour image on original image
 img, contour = ContourDetector(edge_map, src)
 
 cv2.imshow('Contour', img)
 cv2.waitKey()
 cv2.destroyAllWindows()
 
+cv2.imwrite('./images/test{}_contour.jpg'.format(args.input[-5]), img)
+print('./images/test{}_contour.jpg saved!'.format(args.input[-5]))
