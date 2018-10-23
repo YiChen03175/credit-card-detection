@@ -8,7 +8,7 @@ import argparse
 import numpy as np
 from ContourDetect import ContourDetector
 
-def CannyDetector(threshold=40):
+def CannyDetector(threshold=45):
 	'''
 	Canny detection by threshold values
 	
@@ -23,7 +23,7 @@ def CannyDetector(threshold=40):
 	img_blur = cv2.medianBlur(img_blur, 23)
 
 	# Detect edges using canny detector
-	edge_map = cv2.Canny(img_blur, threshold, threshold*3, apertureSize = 3)
+	edge_map = cv2.Canny(img_blur, threshold, threshold*3, apertureSize=3)
 
 	cv2.imshow('Edge Map', edge_map)
 

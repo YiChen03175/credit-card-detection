@@ -20,7 +20,7 @@ def ContourDetector(edge_map, background):
 	'''
 
 	# Find the largest area contour on edge map
-	image, contours, hierarchy=cv2.findContours(edge_map.copy(), cv2.RETR_TREE ,cv2.CHAIN_APPROX_SIMPLE)
+	_, contours, h_ = cv2.findContours(edge_map.copy(), cv2.RETR_TREE ,cv2.CHAIN_APPROX_SIMPLE)
 	contours = sorted(contours, key = cv2.contourArea, reverse = True)[0]
 
 	# Restrict the approximation by contour's length
@@ -33,6 +33,7 @@ def ContourDetector(edge_map, background):
 	cv2.drawContours(background, [approx], -1, (0, 255, 0), 2)
 	
 	cv2.imshow('Contour', background)
+
 	return background, approx
 
 if __name__=='__main__':
