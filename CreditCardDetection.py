@@ -6,6 +6,7 @@
 import cv2 
 import argparse
 import numpy as np
+from ContourDetect import ContourDetector
 
 '''
 Canny Edge Detection
@@ -15,17 +16,23 @@ Canny Edge Detection
 window_name = 'Edge Map'
 title = 'Threshold:'
 
-# Show canny detection with different low threshold values
-def CannyDetector(threshold):
+def CannyDetector(threshold=40):
+	'''
+	Canny detection by threshold values
+	
+	# Parameter
+	threshold: minimum threshold for canny detector, maximum threshold is multiply by 3
+	'''
 
 	# Smooth image by gaussian filter
 	img_blur = cv2.GaussianBlur(src, (5, 5), 0)
 
 	# Clean text by median filter
-	img_blur = cv2.medianBlur(img_blur, 17)
+	img_blur = cv2.medianBlur(img_blur, 23)
 
 	# Detect edges using canny detector
-	edge_map = cv2.Canny(img_blur, threshold, threshold*3, 3)
+	edge_map = cv2.Canny(img_blur, threshold, threshold*3, apertureSize = 3)
+
 	cv2.imshow(window_name, edge_map)
 
 	return edge_map
@@ -42,7 +49,11 @@ if src is None:
     print('Couldn\'t open', args.input)
     exit(0)
 
+# Scale image by fixed height 500px 
+ratio = 500/src.shape[0]
+src = cv2.resize(src, (int(ratio*src.shape[1]), 500))
 
+'''
 # Create window for trackerbar
 print('Choose a proper threshold and press any key ...')
 cv2.namedWindow(window_name)
@@ -53,36 +64,25 @@ cv2.waitKey()
 # Save the threshold we choose before destroy
 chosen_threshold = cv2.getTrackbarPos(title, window_name)
 cv2.destroyAllWindows()
+'''
 
 # Generate edge_map by chosen threshold
-edge_map = CannyDetector(chosen_threshold)
+edge_map = CannyDetector()
+
+# Make outline more obvious 
+edge_map = cv2.dilate(edge_map, None)
+
+cv2.imshow('Edge Map', edge_map)
+cv2.waitKey()
+cv2.destroyAllWindows()
 
 # Save edge map image in './images' folder
 cv2.imwrite('./images/test{}_edge_map.jpg'.format(args.input[-5]), edge_map)
 print('./images/test{}_edge_map.jpg saved!'.format(args.input[-5]))
 
-'''
-Hough Line Transform
-'''
+img, contour = ContourDetector(edge_map, src)
 
-lines = cv2.HoughLines(edge_map, 1, (np.pi/180), 100)
-img = cv2.cvtColor(edge_map,cv2.COLOR_GRAY2RGB)
-
-# Draw red lines on image using theta and rho
-for rho,theta in lines[:,0,:]:
-	a = np.cos(theta)
-	b = np.sin(theta)
-	x0 = a*rho
-	y0 = b*rho
-	x1 = int(x0 + 1000*(-b))
-	y1 = int(y0 + 1000*(a))
-	x2 = int(x0 - 1000*(-b))
-	y2 = int(y0 - 1000*(a))
-	cv2.line(img, (x1, y1), (x2, y2), (0,0,255), 2)
-
-cv2.imshow(window_name, img)
+cv2.imshow('Contour', img)
 cv2.waitKey()
+cv2.destroyAllWindows()
 
-# Save hough line image 
-cv2.imwrite('./images/test{}_hough_line.jpg'.format(args.input[-5]), img)
-print('./images/test{}_hough_line.jpg saved!'.format(args.input[-5]))

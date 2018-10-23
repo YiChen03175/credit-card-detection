@@ -50,7 +50,7 @@ if __name__=='__main__':
 
 	# Take arguments from command line 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-input', default='./images/test1_edge_map.jpg')
+	parser.add_argument('-input', default='./images/test3_edge_map.jpg')
 	args = parser.parse_args()
 
 	# Read input image
@@ -58,6 +58,9 @@ if __name__=='__main__':
 	if edge_map is None:
 	    print('Couldn\'t open', args.input)
 	    exit(0)
+
+	# Edge map is a binary image
+	_, edge_map = cv2.threshold(edge_map, 127, 255, cv2.THRESH_BINARY)
 
 	# Parameter for CornerHarris tracker bar
 	window_name = 'Corner Detector'
