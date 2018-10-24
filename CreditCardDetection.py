@@ -65,6 +65,13 @@ cv2.destroyAllWindows()
 # Generate edge_map by chosen threshold
 edge_map = CannyDetector()
 
+cv2.imshow('Edge Map', edge_map)
+cv2.waitKey()
+cv2.destroyAllWindows()
+
+cv2.imwrite('./images/test{}_edge_map.jpg'.format(args.input[-5]), edge_map)
+print('./images/test{}_edge_map.jpg saved!'.format(args.input[-5]))
+
 # Make outline more obvious 
 edge_map = cv2.dilate(edge_map, None)
 
@@ -73,8 +80,8 @@ cv2.waitKey()
 cv2.destroyAllWindows()
 
 # Save edge map image in './images' folder
-cv2.imwrite('./images/test{}_edge_map.jpg'.format(args.input[-5]), edge_map)
-print('./images/test{}_edge_map.jpg saved!'.format(args.input[-5]))
+cv2.imwrite('./images/test{}_dilate.jpg'.format(args.input[-5]), edge_map)
+print('./images/test{}_dilate.jpg saved!'.format(args.input[-5]))
 
 # Get contour image on original image
 img, contour = ContourDetector(edge_map, src)

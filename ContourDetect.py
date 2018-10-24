@@ -40,7 +40,7 @@ if __name__=='__main__':
 
 	# Take arguments from command line 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-input', default='./images/test1_edge_map.jpg')
+	parser.add_argument('-input', default='./images/test1_dilate.jpg')
 	args = parser.parse_args()
 
 	# Read input image
@@ -50,7 +50,7 @@ if __name__=='__main__':
 	# Edge map is a binary image
 	_,edge_map = cv2.threshold(edge_map, 127, 255, cv2.THRESH_BINARY)
 
-	image = ContourDetector(edge_map, edge_map)
+	image, _ = ContourDetector(edge_map, edge_map)
 
 	cv2.waitKey(0)
 	cv2.destroyAllWindows()
