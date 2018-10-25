@@ -50,7 +50,7 @@ if __name__=='__main__':
 
 	# Take arguments from command line 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-input', default='./images/test3_edge_map.jpg')
+	parser.add_argument('-input', default='./images/output/edge_map/test1_edge_map.jpg')
 	args = parser.parse_args()
 
 	# Read input image

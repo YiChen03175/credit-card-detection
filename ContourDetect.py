@@ -25,7 +25,7 @@ def ContourDetector(edge_map, background):
 
 	# Restrict the approximation by contour's length
 	length = cv2.arcLength(contours, True)
-	approx = cv2.approxPolyDP(contours, 0.005*length, True)
+	approx = cv2.approxPolyDP(contours, 0.004*length, True)
 
 	# Draw contour on background image
 	if len(background.shape) == 2:
@@ -40,7 +40,7 @@ if __name__=='__main__':
 
 	# Take arguments from command line 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-input', default='./images/test1_dilate.jpg')
+	parser.add_argument('-input', default='./images/output/dilate/test1_dilate.jpg')
 	args = parser.parse_args()
 
 	# Read input image
