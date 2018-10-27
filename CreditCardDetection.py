@@ -6,13 +6,14 @@
 import cv2 
 import argparse
 import numpy as np
-from ContourDetect import ContourDetector
+from ContourDetect import Contour_Detector
+from LineDetect import Corner_Detect_By_Hough_Line
 
-def SaveImage(path, image):
+def Save_Image(path, image):
 	'''
 	Save images by path
 
-	# Parameter
+	# Parameters
 	path: the path for saving images 
 	image: image you want to save
 	'''
@@ -23,27 +24,29 @@ def SaveImage(path, image):
 	else:
 		print('Something wrong with', path)
 
-def CannyDetector(threshold):
+def Canny_Detector(threshold):
 	'''
 	Canny detection by threshold values
 	
-	# Parameter
+	# Parameters
 	threshold: take threshold for canny edge detection
 
 	# Return
 	edge_map: edge map generate from canny edge detection
 	'''
-	img_blur=src
+
 	# Smooth image by gaussian filter
-	img_blur = cv2.GaussianBlur(img_blur,(5,5),0)
+	img_blur = cv2.GaussianBlur(src, (5,5), 0)
 
 	# Clean text by median filter
-	img_blur = cv2.medianBlur(img_blur, 17)
+	img_blur = cv2.medianBlur(img_blur, 9)
 
 	# Detect edges using canny detector
 	edge_map = cv2.Canny(img_blur, threshold*0.66, threshold*1.33, apertureSize=3)
 
 	cv2.imshow('Edge Map', edge_map)
+	cv2.waitKey()
+	cv2.destroyAllWindows()
 
 	return edge_map
 
@@ -63,26 +66,41 @@ if src is None:
 ratio = 500/src.shape[0]
 src = cv2.resize(src, (int(ratio*src.shape[1]), 500))
 
-# Set threshold by gray scale image median value
-threshold = np.median(src)
+# Set threshold by image median value
+threshold = np.mean(src)
 
 # Get edge map by canny edge detection 
-edge_map = CannyDetector(threshold)
+edge_map = Canny_Detector(threshold)
 
 # Make contour complete by filling some small gaps on edge map
 kernel = cv2.getStructuringElement(cv2.MORPH_CROSS, (5, 5))
-edge_map = cv2.dilate(edge_map, kernel)
-edge_map = cv2.erode(edge_map, kernel)
+edge_map = cv2.morphologyEx(edge_map, cv2.MORPH_CLOSE, kernel)
 
 cv2.imshow('Edge Map', edge_map)
 cv2.waitKey()
 cv2.destroyAllWindows()
-SaveImage('./images/output/test{}_dilate.jpg'.format(args.input[-5]), edge_map)
+Save_Image('./images/output/test{}_edge_map.jpg'.format(args.input[-5]), edge_map)
 
 # Get contour image on original image
-img, contour = ContourDetector(edge_map, src)
+img, contour, position = Contour_Detector(edge_map, src.copy())
 
-cv2.imshow('Contour', img)
+# Capture bounding box contain credit card
+x, y, w, h = position
+bounding_box = contour[y-15:y+h+15,x-15:x+w+15]
+
+cv2.imshow('Contour', bounding_box)
 cv2.waitKey()
 cv2.destroyAllWindows()
-SaveImage('./images/output/test{}_contour.jpg'.format(args.input[-5]), img)
+Save_Image('./images/output/test{}_contour.jpg'.format(args.input[-5]), contour)
+
+# Hough Line Detection
+corners = Corner_Detect_By_Hough_Line(bounding_box, position)
+
+corner_plot = src.copy()
+for p1, p2 in corners:
+	cv2.circle(corner_plot, (p1, p2), 3, (0, 0, 255), -1)
+
+cv2.imshow('Contour Plot', corner_plot)
+cv2.waitKey()
+cv2.destroyAllWindows()
+Save_Image('./images/output/test{}_corner.jpg'.format(args.input[-5]), corner_plot)
