@@ -39,7 +39,7 @@ def Canny_Detector(threshold):
 	img_blur = cv2.GaussianBlur(src, (5,5), 0)
 
 	# Clean text by median filter
-	img_blur = cv2.medianBlur(img_blur, 9)
+	img_blur = cv2.medianBlur(img_blur, 17)
 
 	# Detect edges using canny detector
 	edge_map = cv2.Canny(img_blur, threshold*0.66, threshold*1.33, apertureSize=3)
