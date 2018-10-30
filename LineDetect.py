@@ -138,7 +138,7 @@ if __name__=='__main__':
 
 	# Take arguments from command line 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-input', default='./images/output/test4_contour.jpg')
+	parser.add_argument('-input', default='./images/output/contour.jpg')
 	args = parser.parse_args()
 
 	# Read input image

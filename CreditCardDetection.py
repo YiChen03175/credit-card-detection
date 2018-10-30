@@ -7,7 +7,6 @@ import cv2
 import argparse
 import numpy as np
 from ContourDetect import Contour_Detector
-from LineDetect import Corner_Detect_By_Hough_Line
 
 def Save_Image(path, image):
 	'''
@@ -36,17 +35,15 @@ def Canny_Detector(threshold):
 	'''
 
 	# Smooth image by gaussian filter
-	img_blur = cv2.GaussianBlur(src, (5,5), 0)
+	img_blur = cv2.GaussianBlur(src, (5, 5), 0)
 
 	# Clean text by median filter
-	img_blur = cv2.medianBlur(img_blur, 17)
+	img_blur = cv2.medianBlur(img_blur, 11)
 
 	# Detect edges using canny detector
 	edge_map = cv2.Canny(img_blur, threshold*0.66, threshold*1.33, apertureSize=3)
 
 	cv2.imshow('Edge Map', edge_map)
-	cv2.waitKey()
-	cv2.destroyAllWindows()
 
 	return edge_map
 
@@ -67,7 +64,7 @@ ratio = 500/src.shape[0]
 src = cv2.resize(src, (int(ratio*src.shape[1]), 500))
 
 # Set threshold by image median value
-threshold = np.mean(src)
+threshold = np.median(src)
 
 # Get edge map by canny edge detection 
 edge_map = Canny_Detector(threshold)
@@ -82,25 +79,27 @@ cv2.destroyAllWindows()
 Save_Image('./images/output/test{}_edge_map.jpg'.format(args.input[-5]), edge_map)
 
 # Get contour image on original image
-img, contour, position = Contour_Detector(edge_map, src.copy())
+contour, position = Contour_Detector(edge_map)
 
-# Capture bounding box contain credit card
+if contour is None:
+	print('Sorry, can\'t detect any credit card!')
+	exit(0)
+
+# Get the bounding box of contour
 x, y, w, h = position
-bounding_box = contour[y-15:y+h+15,x-15:x+w+15]
+bounding_box = src[y-15:y+h+15,x-15:x+w+15]
+
+# Reset contour position 
+contour -= [x-15,y-15]
+
+# Scale bounding box by 2
+bounding_box = cv2.resize(bounding_box, (0,0), fx=2, fy=2)
+contour *= 2
+
+# Draw contour on image
+cnt = cv2.drawContours(bounding_box, [contour], -1, (0,0,255), 2)
 
 cv2.imshow('Contour', bounding_box)
 cv2.waitKey()
 cv2.destroyAllWindows()
-Save_Image('./images/output/test{}_contour.jpg'.format(args.input[-5]), contour)
-
-# Hough Line Detection
-corners = Corner_Detect_By_Hough_Line(bounding_box, position)
-
-corner_plot = src.copy()
-for p1, p2 in corners:
-	cv2.circle(corner_plot, (p1, p2), 3, (0, 0, 255), -1)
-
-cv2.imshow('Contour Plot', corner_plot)
-cv2.waitKey()
-cv2.destroyAllWindows()
-Save_Image('./images/output/test{}_corner.jpg'.format(args.input[-5]), corner_plot)
+Save_Image('./images/output/test{}_box.jpg'.format(args.input[-5]), bounding_box)
