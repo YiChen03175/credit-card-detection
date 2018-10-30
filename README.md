@@ -38,10 +38,15 @@ Install require package using [requirements.txt](./requirements.txt)
 ```sh
 $ pip3 install -r requirements.txt
 ```
-# Demonstration
+# How to Run
 
 Run [CreditCardDetection.py](./CreditCardDetection.py) in this folder
 
 ```sh
 $ python3 CreditCardDetetion.py
+```
+Default path is *./images/angle/angle1.jpg*, you can add your own path by *-input* as below
+
+```sh
+$ python3 CreditCardDetection.py -input ./images/contrast/contrast1.jpg
 ```
