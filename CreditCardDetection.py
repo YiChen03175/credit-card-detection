@@ -23,6 +23,7 @@ def Save_Image(path, image):
 	else:
 		print('Something wrong with', path)
 
+
 def Canny_Detector(threshold):
 	'''
 	Canny detection by threshold values
@@ -50,7 +51,7 @@ def Canny_Detector(threshold):
 
 # Take arguments from command line 
 parser = argparse.ArgumentParser()
-parser.add_argument('-input', default='./images/test1.jpg')
+parser.add_argument('-input', default='./images/simple/simple1.jpg')
 args = parser.parse_args()
 
 # Read input image
@@ -63,20 +64,28 @@ if src is None:
 ratio = 500/src.shape[0]
 src = cv2.resize(src, (int(ratio*src.shape[1]), 500))
 
+'''
+Canny Edge Detection and Closing Operator
+'''
+
 # Set threshold by image median value
 threshold = np.median(src)
 
 # Get edge map by canny edge detection 
 edge_map = Canny_Detector(threshold)
 
-# Make contour complete by filling some small gaps on edge map
+# Find skeleton of edge by closing operator
 kernel = cv2.getStructuringElement(cv2.MORPH_CROSS, (5, 5))
 edge_map = cv2.morphologyEx(edge_map, cv2.MORPH_CLOSE, kernel)
 
 cv2.imshow('Edge Map', edge_map)
 cv2.waitKey()
 cv2.destroyAllWindows()
-Save_Image('./images/output/test{}_edge_map.jpg'.format(args.input[-5]), edge_map)
+Save_Image('./images/output/EdgeMap_{}.jpg'.format(args.input[-5]), edge_map)
+
+'''
+Contour Detection on Edge Map
+'''
 
 # Get contour image on original image
 contour, position = Contour_Detector(edge_map)
@@ -84,6 +93,10 @@ contour, position = Contour_Detector(edge_map)
 if contour is None:
 	print('Sorry, can\'t detect any credit card!')
 	exit(0)
+
+'''
+Visualization for Clear Contour
+'''
 
 # Get the bounding box of contour
 x, y, w, h = position
@@ -99,7 +112,7 @@ contour *= 2
 # Draw contour on image
 cnt = cv2.drawContours(bounding_box, [contour], -1, (0,0,255), 2)
 
-cv2.imshow('Contour', bounding_box)
+cv2.imshow('Contour', cnt)
 cv2.waitKey()
 cv2.destroyAllWindows()
-Save_Image('./images/output/test{}_box.jpg'.format(args.input[-5]), bounding_box)
+Save_Image('./images/output/ContourBox_{}.jpg'.format(args.input[-5]), cnt)
