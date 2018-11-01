@@ -51,11 +51,7 @@ def Canny_Detector(threshold):
 
 # Take arguments from command line 
 parser = argparse.ArgumentParser()
-<<<<<<< HEAD
 parser.add_argument('-input', default='./images/simple/simple1.jpg')
-=======
-parser.add_argument('-input', default='./images/angle/angle1.jpg')
->>>>>>> 8bd1b02ee6e32d75ee9d2e5b33175fa2e984a287
 args = parser.parse_args()
 
 # Read input image
