@@ -30,13 +30,7 @@ def Contour_Detector(edge_map):
 	for c in range(3):
 		for comb in list(combinations(range(3), c+1)):
 			combs.append(list(comb))
-	'''
-	sec = edge_map.copy()
-	sec = cv2.cvtColor(sec, cv2.COLOR_GRAY2RGB)
-	#hull = cv2.convexHull(contours[combs[0]])
-	cnt = cv2.drawContours(sec, [contours[2]], -1, (0,0,255), 2)
-	cv2.imwrite('./images/test.jpg', cnt)
-	'''
+
 	# Initialize the minimum area size and corresponding contour
 	MIN, MIN_CNT = 1e10, None
 	test = []
